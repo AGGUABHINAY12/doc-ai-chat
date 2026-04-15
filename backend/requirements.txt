@@ -1,0 +1,9 @@
+streamlit
+transformers
+torch
+datasets
+PyPDF2
+accelerate
+python-docx
+python-pptx
+python-dotenv
