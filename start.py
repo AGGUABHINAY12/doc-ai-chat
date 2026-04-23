@@ -14,19 +14,21 @@ def run_services():
     processes = []
     
     try:
-        # Change to backend directory to install dependencies
-        print("\n📦 Installing backend dependencies...")
+        # Get directories
         backend_dir = os.path.join(os.path.dirname(__file__), 'backend')
+        frontend_dir = os.path.join(os.path.dirname(__file__), 'frontend')
         
-        # Check if requirements.txt exists
+        # Check if requirements.txt exists and install (optional - remove if you don't want)
+        print("\n📦 Checking backend dependencies...")
         requirements_file = os.path.join(backend_dir, 'requirements.txt')
         if os.path.exists(requirements_file):
-            subprocess.run([sys.executable, "-m", "pip", "install", "-r", requirements_file], check=True)
-            print("✅ Dependencies installed!")
+            # Comment this line if you don't want auto-install
+            # subprocess.run([sys.executable, "-m", "pip", "install", "-r", requirements_file], check=False)
+            print("✅ Dependencies ready")
         else:
-            print("⚠️ requirements.txt not found in backend folder")
+            print("⚠️ requirements.txt not found")
         
-        # Start backend from backend directory
+        # Start backend
         print("\n📡 Starting Backend Server on http://localhost:8000...")
         backend = subprocess.Popen(
             [sys.executable, "-m", "uvicorn", "app:app", "--host", "127.0.0.1", "--port", "8000", "--reload"],
@@ -42,9 +44,8 @@ def run_services():
         print("⏳ Waiting for backend to start...")
         time.sleep(5)
         
-        # Start frontend from frontend directory
+        # Start frontend
         print("\n🌐 Starting Frontend Server on http://localhost:5500...")
-        frontend_dir = os.path.join(os.path.dirname(__file__), 'frontend')
         
         # Check if index.html exists
         index_file = os.path.join(frontend_dir, 'index.html')
@@ -53,8 +54,10 @@ def run_services():
             print("📁 Make sure index.html is in the frontend folder")
             sys.exit(1)
         
+        # Start HTTP server in frontend directory
         frontend = subprocess.Popen(
-            [sys.executable, "-m", "http.server", "5500", "--directory", frontend_dir],
+            [sys.executable, "-m", "http.server", "5500"],
+            cwd=frontend_dir,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             universal_newlines=True,
@@ -87,18 +90,6 @@ def run_services():
                 if proc.poll() is not None:
                     print(f"\n⚠️ A server stopped unexpectedly (PID: {proc.pid})")
                     return
-            
-            # Read and display backend output (optional - shows errors)
-            try:
-                if backend.stdout and backend.stdout.readable():
-                    # Non-blocking read
-                    import select
-                    if select.select([backend.stdout], [], [], 0)[0]:
-                        line = backend.stdout.readline()
-                        if line and ("ERROR" in line or "WARNING" in line):
-                            print(f"[Backend] {line.strip()}")
-            except:
-                pass
             
             time.sleep(1)
             

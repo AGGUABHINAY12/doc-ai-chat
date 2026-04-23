@@ -1,0 +1,49 @@
+# Create .gitignore file
+cat > .gitignore << EOF
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Uploaded files (IMPORTANT - remove these from git)
+backend/uploads/*.pdf
+backend/uploads/*.txt
+!backend/uploads/.gitkeep
+
+# Environment
+.env
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+EOF
